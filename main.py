@@ -1,5 +1,6 @@
 from data_manager import DataManager
 from flight_search import FlightSearch
+from notification_manager import NotificationManager
 from datetime import datetime, timedelta
 import sys
 import io
@@ -22,7 +23,9 @@ for data in sheet_data:
     flight_search = FlightSearch()
     flights = flight_search.check_flights(ORIGIN_CITY, data["iataCode"], FROM_TIME, TO_TIME)
 
-    if flights and flights.price < data["lowestPrice"]:
-        print(f"{flights.destination_city} : £{flights.price} is lower than your lowest price £{data['lowestPrice']}.")
+    if flights is not None and flights.price < data["lowestPrice"]:
+      notificationManager = NotificationManager()
+      message = f"Low price alert! Only £{flights.price} to fly from {flights.origin_city}-{flights.origin_airport} to {flights.destination_city}-{flights.destination_airport}, from {flights.out_date} to {flights.return_date}."
+      notificationManager.send_sms(message)
 
 
